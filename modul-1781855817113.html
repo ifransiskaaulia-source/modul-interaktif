@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Modul Kecerdasan Buatan</title>
+<style>
+body {font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; color:#333;}
+header {background:#4a90e2; color:#fff; padding:20px; text-align:center;}
+nav {background:#357ab8; overflow:hidden;}
+nav a {float:left; display:block; color:#fff; text-align:center; padding:14px 20px; text-decoration:none;}
+nav a:hover {background:#5dade2;}
+section {padding:20px; margin:20px; background:#fff; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+h2 {color:#2c3e50;}
+.quiz {margin-top:20px;}
+.question {margin-bottom:15px; padding:10px; border-left:4px solid #4a90e2; background:#f9f9f9;}
+button {background:#27ae60; color:#fff; border:none; padding:10px 15px; cursor:pointer; border-radius:4px;}
+button:hover {background:#2ecc71;}
+#result {margin-top:15px; font-weight:bold;}
+.animation {width:100px; height:100px; background:#e74c3c; border-radius:50%; margin:20px auto; animation: pulse 2s infinite;}
+@keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+footer {text-align:center; padding:10px; background:#2c3e50; color:#fff; position:fixed; bottom:0; width:100%;}
+</style>
+</head>
+<body>
+<header>
+<h1>Modul Pembelajaran Kecerdasan Buatan</h1>
+</header>
+<nav>
+<a href="#pengertian">Pengertian</a>
+<a href="#sejarah">Sejarah</a>
+<a href="#komponen">Komponen Utama</a>
+<a href="#aplikasi">Aplikasi</a>
+<a href="#quiz">Quiz</a>
+</nav>
+
+<section id="pengertian">
+<h2>Pengertian Kecerdasan Buatan</h2>
+<p>Kecerdasan Buatan (Artificial Intelligence, AI) adalah cabang ilmu komputer yang bertujuan menciptakan sistem yang dapat melakukan tugas yang biasanya memerlukan kecerdasan manusia, seperti pengambilan keputusan, pengenalan pola, dan pemrosesan bahasa alami.</p>
+<div class="animation"></div>
+</section>
+
+<section id="sejarah">
+<h2>Sejarah Singkat AI</h2>
+<ul>
+<li>1950: Alan Turing提出 "Turing Test".</li>
+<li>1956: Konferensi Dartmouth lahirnya istilah "Artificial Intelligence".</li>
+<li>1997: IBM Deep Blue mengalahkan juara dunia catur Garry Kasparov.</li>
+<li>2012: AlexNet menang dalam kompetisi ImageNet, memulai era deep learning.</li>
+<li>2020-an: Model bahasa besar seperti GPT-3 dan GPT-4 menunjukkan kemampuan bahasa avançada.</li>
+</ul>
+</section>
+
+<section id="komponen">
+<h2>Komponen Utama AI</h2>
+<ol>
+<li><strong>Machine Learning (ML)</strong>: Algoritma yang belajar dari data.</li>
+<li><strong>Deep Learning</strong>: Jaringan saraf tiruan dengan banyak lapisan.</li>
+<li><strong>Natural Language Processing (NLP)</strong>: Pemrosesan dan pemahaman bahasa manusia.</li>
+<li><strong>Computer Vision</strong>: Interpretasi visual dari gambar dan video.</li>
+<li><strong>Robotics</strong>: Integrasi AI dengan sistem mekanik untuk otomasi.</li>
+</ol>
+</section>
+
+<section id="aplikasi">
+<h2>Aplikasi AI dalam Kehidupan Sehari-hari</h2>
+<ul>
+<li>Asisten virtual (Siri, Google Assistant, Alexa).</li>
+<li>Sistem rekomendasi (Netflix, Spotify, Tokopedia).</li>
+<li>Kendaraan otonom (Tesla Autopilot, Waymo).</li>
+<li>Diagnosa medis (pendeteksi tumor pada radiologi).</li>
+<li>Deteksi penipuan transaksi kartu kredit.</li>
+</ul>
+</section>
+
+<section id="quiz">
+<h2>Quiz Interaktif</h2>
+<div class="quiz" id="quizContainer">
+<!-- Soal akan diisi oleh JavaScript -->
+</div>
+<button id="submitBtn">Submit Jawaban</button>
+<div id="result"></div>
+</section>
+
+<footer>
+© 2025 Modul Kecerdasan Buatan - Hak Cipta Dilindungi
+</footer>
+
+<script>
+// Data quiz
+const quizData = [
+{
+question: "Apa singkatan dari AI dalam konteks kecerdasan buatan?",
+options: ["Artificial Intelligence", "Advanced Informatics", "Automated Input", "Analytic Interface"],
+answer: 0
+},
+{
+question: "Tahun mana konferensi Dartmouth yang lahirnya istilah 'Artificial Intelligence'?",
+options: ["1950", "1956", "1962", "1970"],
+answer: 1
+},
+{
+question: "Manakah berikut merupakan contoh aplikasi Deep Learning?",
+options: ["Pohon keputusan untuk klasifikasi", "Jaringan saraf tiruan dengan banyak lapisan", "Algoritma k-means clustering", "Aturan jika-maka dalam sistem pakar"],
+answer: 1
+},
+{
+question: "Apa yang dimaksud dengan Turing Test?",
+options: ["Uji kecepatan komputer", "Uji apakah mesin dapat berpikir seperti manusia melalui percakapan", "Uji akurasi pengenalan gambar", "Uji konsumsi daya perangkat keras"],
+answer: 1
+},
+{
+question: "Manakah di bawah ini termasuk bidang Computer Vision?",
+options: ["Pengenalan suara", "Deteksi objek dalam gambar", "Analisis sentimen teks", "Prediksi pasar saham"],
+answer: 1
+}
+];
+
+let currentQuiz = 0;
+let score = 0;
+const quizContainer = document.getElementById('quizContainer');
+const resultDiv = document.getElementById('result');
+const submitBtn = document.getElementById('submitBtn');
+
+function loadQuiz() {
+const data = quizData[currentQuiz];
+quizContainer.innerHTML = `
+<div class="question"><strong>${data.question}</strong></div>
+${data.options.map((opt, idx) => `
+<label style="display:block; margin:5px 0;">
+<input type="radio" name="answer" value="${idx}">
+${opt}
+</label>`).join('')}
+`;
+}
+function checkAnswer() {
+const selected = quizContainer.querySelector('input[name="answer"]:checked');
+if (!selected) {
+alert('Pilih salah satu jawaban!');
+return;
+}
+const answer = parseInt(selected.value);
+if (answer === quizData[currentQuiz].answer) {
+score++;
+}
+currentQuiz++;
+if (currentQuiz < quizData.length) {
+loadQuiz();
+} else {
+quizContainer.innerHTML = '';
+submitBtn.style.display = 'none';
+resultDiv.innerHTML = `<p>Anda berhasil menjawab ${score} dari ${quizData.length} soal dengan benar.</p>`;
+if (score === quizData.length) {
+resultDiv.innerHTML += `<p>Semua jawaban benar! Hebat!</p>`;
+} else if (score >= quizData.length * 0.6) {
+resultDiv.innerHTML += `<p>Bagus, tapi masih bisa ditingkatkan.</p>`;
+} else {
+resultDiv.innerHTML += `<p>Belajar lagi yuk!</p>`;
+}
+}
+}
+loadQuiz();
+submitBtn.addEventListener('click', checkAnswer);
+</script>
+</body>
+</html>
