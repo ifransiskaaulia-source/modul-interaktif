@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tata Surya</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#0d1117 0%,#1a1040 40%,#0d2137 100%);min-height:100vh;color:#fff;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;z-index:9999;background:linear-gradient(90deg,#a855f7,#06b6d4);width:0%;transition:width 0.15s;}
+.sidebar{width:240px;height:100vh;background:linear-gradient(180deg,rgba(168,85,247,0.15) 0%,rgba(6,182,212,0.1) 100%);backdrop-filter:blur(20px);border-right:1px solid rgba(168,85,247,0.2);padding:1.5rem 1rem;position:fixed;left:0;top:0;z-index:100;transition:transform 0.3s;display:flex;flex-direction:column;overflow-y:auto;}
+.sidebar.hidden{transform:translateX(-100%);}
+.sidebar-logo{margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo .title{color:#a855f7;font-size:1.05rem;font-weight:700;}
+.sidebar-logo .sub{color:rgba(255,255,255,0.4);font-size:0.72rem;margin-top:3px;}
+.nav-section{font-size:0.68rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin:1rem 0 0.4rem 0.5rem;}
+.sidebar a{display:flex;align-items:center;gap:0.6rem;color:rgba(255,255,255,0.6);text-decoration:none;padding:0.55rem 0.8rem;border-radius:10px;font-size:0.88rem;transition:all 0.2s;margin-bottom:2px;}
+.sidebar a:hover{background:rgba(168,85,247,0.15);color:#a855f7;}
+.sidebar a.active{background:linear-gradient(90deg,rgba(168,85,247,0.25),rgba(6,182,212,0.15));color:#a855f7;border-left:2px solid #a855f7;}
+.sidebar a.cyan-nav:hover{color:#06b6d4;background:rgba(6,182,212,0.15);}
+.sidebar a.cyan-nav.active{color:#06b6d4;border-left-color:#06b6d4;background:linear-gradient(90deg,rgba(6,182,212,0.2),rgba(168,85,247,0.1));}
+.hamburger{position:fixed;top:1rem;left:1rem;z-index:200;width:40px;height:40px;border-radius:10px;border:1px solid rgba(168,85,247,0.4);background:rgba(168,85,247,0.15);backdrop-filter:blur(10px);color:#a855f7;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.hamburger:hover{background:rgba(168,85,247,0.3);}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90;}
+.overlay.show{display:block;}
+.main{margin-left:240px;padding:2rem;transition:margin 0.3s;}
+.main.full{margin-left:0;padding:2rem 2rem 2rem 5rem;}
+.glass-card{background:rgba(255,255,255,0.04);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:1.8rem;margin-bottom:1.5rem;width:100%;}
+.glass-card.purple-border{border-color:rgba(168,85,247,0.25);}
+.glass-card.cyan-border{border-color:rgba(6,182,212,0.25);}
+.section-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.5rem;font-weight:600;}
+.purple-label{color:#a855f7;}.cyan-label{color:#06b6d4;}
+.section-title{font-size:1.4rem;font-weight:700;margin-bottom:1rem;}
+.purple-title{color:#a855f7;}.cyan-title{color:#06b6d4;}
+.hero-desc{color:rgba(255,255,255,0.7);line-height:1.8;font-size:0.95rem;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem;}
+.info-box{padding:1rem;border-radius:12px;font-size:0.85rem;line-height:1.6;color:rgba(255,255,255,0.75);}
+.info-box.purple{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);}
+.info-box.cyan{background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);}
+.info-box h4{margin-bottom:0.4rem;font-size:0.88rem;}
+.info-box.purple h4{color:#a855f7;}.info-box.cyan h4{color:#06b6d4;}
+.sub-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1.2rem;margin-bottom:1rem;}
+.sub-card h3{font-size:0.95rem;margin-bottom:0.6rem;color:#06b6d4;}
+.sub-content p{color:rgba(255,255,255,0.7);font-size:0.88rem;line-height:1.75;margin-bottom:0.8rem;}
+canvas{width:100%;border-radius:12px;display:block;background:rgba(0,0,0,0.2);}
+.timer{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.25);color:#06b6d4;padding:0.35rem 1rem;border-radius:50px;font-size:0.85rem;margin-bottom:1.2rem;}
+.quiz-nav{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+.q-dot{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-size:0.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.q-dot.done{background:rgba(168,85,247,0.3);border-color:#a855f7;color:#a855f7;}
+.q-dot.current{background:rgba(6,182,212,0.3);border-color:#06b6d4;color:#06b6d4;}
+.opt{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.5rem;cursor:pointer;color:rgba(255,255,255,0.8);font-size:0.88rem;transition:all 0.2s;}
+.opt:hover{background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);}
+.opt.correct{background:rgba(34,197,94,0.15);border-color:#22c55e;color:#86efac;pointer-events:none;}
+.opt.wrong{background:rgba(239,68,68,0.15);border-color:#ef4444;color:#fca5a5;pointer-events:none;}
+.opt.disabled{pointer-events:none;opacity:0.5;}
+.feedback{padding:0.6rem 1rem;border-radius:8px;font-size:0.83rem;margin-top:0.5rem;display:none;}
+.feedback.ok{background:rgba(34,197,94,0.1);color:#86efac;border:1px solid rgba(34,197,94,0.2);}
+.feedback.no{background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.2);}
+.quiz-q{color:#fff;font-size:0.92rem;font-weight:500;margin-bottom:0.8rem;}
+.result-box{text-align:center;padding:1.5rem;}
+.result-score{font-size:3rem;font-weight:700;background:linear-gradient(90deg,#a855f7,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.result-grade{font-size:1.2rem;color:rgba(255,255,255,0.7);margin-top:0.3rem;}
+.glos-item{padding:0.8rem 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.glos-item:last-child{border-bottom:none;}
+.glos-term{color:#a855f7;font-weight:600;font-size:0.9rem;}
+.glos-def{color:rgba(255,255,255,0.65);font-size:0.85rem;margin-top:0.2rem;line-height:1.6;}
+#back-top{position:fixed;bottom:1.5rem;right:1.5rem;width:40px;height:40px;border-radius:50%;border:1px solid rgba(168,85,247,0.4);background:rgba(168,85,247,0.15);backdrop-filter:blur(10px);color:#a855f7;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#back-top:hover{background:rgba(168,85,247,0.3);}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="title">📚 Tata Surya</div>
+    <div class="sub">VII · Ilmu Pengetahuan Alam</div>
+  </div>
+  <div class="nav-section">Navigasi</div>
+  <a href="#beranda">🏠 Beranda</a>
+  <a href="#materi">📖 Materi</a>
+  <a href="#animasi" class="cyan-nav">✨ Animasi</a>
+  <a href="#quiz" class="cyan-nav">❓ Quiz</a>
+  <a href="#glosarium">📝 Glosarium</a>
+</nav>
+<div class="main" id="main">
+  <section id="beranda" class="glass-card purple-border">
+    <div class="section-label purple-label">Modul Interaktif</div>
+    <div class="section-title purple-title">Tata Surya</div>
+    <p class="hero-desc">Memahami konsep tata surya, menjelaskan struktur dan komponen tata surya, serta mengidentifikasi ciri-ciri planet dan benda langit lainnya. Siswa dapat menjelaskan proses terjadinya gerhana matahari dan bulan, serta mengidentifikasi fenomena astronomi lainnya. Siswa juga dapat menerapkan konsep tata surya dalam kehidupan sehari-hari.</p>
+    <div class="info-grid">
+      <div class="info-box purple"><h4>🎯 Tujuan Pembelajaran</h4>Memahami konsep tata surya, menjelaskan struktur dan komponen tata surya, serta mengidentifikasi ciri-ciri planet dan benda langit lainnya. Siswa dapat menjelaskan proses terjadinya gerhana matahari dan bulan, serta mengidentifikasi fenomena astronomi lainnya. Siswa juga dapat menerapkan konsep tata surya dalam kehidupan sehari-hari.</div>
+      <div class="info-box cyan"><h4>📋 Kompetensi Dasar</h4>3.1</div>
+    </div>
+  </section>
+  <section id="materi" class="glass-card purple-border">
+    <div class="section-label purple-label">Belajar</div>
+    <div class="section-title purple-title">Materi</div>
+    
+  <div class="sub-card">
+    <h3>Pengenalan Tata Surya</h3>
+    <div class="sub-content"><p>Tata surya adalah kumpulan benda langit yang terdiri dari matahari, delapan planet, asteroid, komet, dan benda langit lainnya yang mengorbit di sekitar matahari. Matahari adalah pusat tata surya dan merupakan sumber cahaya dan panas.   Planet-planet di tata surya dapat dibagi menjadi dua kelompok, yaitu planet dalam dan planet luar. Planet dalam terdiri dari Merkurius, Venus, Bumi, dan Mars, sedangkan planet luar terdiri dari Jupiter, Saturnus, Uranus, dan Neptunus.   Asteroid adalah benda langit kecil yang mengorbit di sekitar matahari, biasanya terletak di antara Mars dan Jupiter. Komet adalah benda langit yang terdiri dari es dan debu yang mengorbit di sekitar matahari, biasanya memiliki ekor gas dan debu yang panjang.   Tata surya juga terdiri dari benda langit lainnya seperti meteoroid, meteor, dan meteorit. Meteoroid adalah benda langit kecil yang mengorbit di sekitar matahari, sedangkan meteor adalah benda langit kecil yang memasuki atmosfer bumi dan terbakar, sehingga terlihat seperti bintang jatuh. Meteorit adalah sisa-sisa meteor yang jatuh ke permukaan bumi.   Tata surya memiliki banyak fenomena astronomi yang menarik, seperti gerhana matahari dan bulan, eclipse, dan occultasi. Gerhana matahari terjadi ketika bulan melintas di antara bumi dan matahari, sedangkan gerhana bulan terjadi ketika bumi melintas di antara matahari dan bulan.   Eclipse adalah fenomena astronomi yang terjadi ketika satu benda langit melintas di antara benda langit lainnya, sehingga menghalangi cahaya matahari. Occultasi adalah fenomena astronomi yang terjadi ketika satu benda langit melintas di antara benda langit lainnya, sehingga menghalangi cahaya bintang atau benda langit lainnya.   Tata surya juga memiliki banyak misteri yang belum terpecahkan, seperti asal-usul tata surya, keberadaan kehidupan di luar bumi, dan sifat-sifat benda langit yang belum diketahui.   Penelitian tentang tata surya masih terus dilakukan oleh para ilmuwan, dengan menggunakan teknologi canggih seperti teleskop dan pesawat antariksa.   Dengan mempelajari tata surya, kita dapat memahami lebih baik tentang alam semesta dan tempat kita di dalamnya. Kita juga dapat mengembangkan teknologi dan sains yang lebih canggih untuk menjelajahi dan memahami tata surya lebih baik.</p></div>
+  </div>
+
+  <div class="sub-card">
+    <h3>Struktur Tata Surya</h3>
+    <div class="sub-content"><p>Struktur tata surya dapat dibagi menjadi beberapa bagian, yaitu matahari, planet, asteroid, komet, dan benda langit lainnya.   Matahari adalah pusat tata surya dan merupakan sumber cahaya dan panas. Matahari memiliki ukuran yang sangat besar, dengan diameter sekitar 1.392.684 kilometer.   Planet-planet di tata surya dapat dibagi menjadi dua kelompok, yaitu planet dalam dan planet luar. Planet dalam terdiri dari Merkurius, Venus, Bumi, dan Mars, sedangkan planet luar terdiri dari Jupiter, Saturnus, Uranus, dan Neptunus.   Asteroid adalah benda langit kecil yang mengorbit di sekitar matahari, biasanya terletak di antara Mars dan Jupiter. Komet adalah benda langit yang terdiri dari es dan debu yang mengorbit di sekitar matahari, biasanya memiliki ekor gas dan debu yang panjang.   Tata surya juga terdiri dari benda langit lainnya seperti meteoroid, meteor, dan meteorit. Meteoroid adalah benda langit kecil yang mengorbit di sekitar matahari, sedangkan meteor adalah benda langit kecil yang memasuki atmosfer bumi dan terbakar, sehingga terlihat seperti bintang jatuh. Meteorit adalah sisa-sisa meteor yang jatuh ke permukaan bumi.   Struktur tata surya juga dapat dibagi menjadi beberapa lapisan, yaitu lapisan atmosfer, lapisan magnetosfer, dan lapisan heliosfer. Lapisan atmosfer adalah lapisan yang paling dekat dengan matahari, sedangkan lapisan magnetosfer adalah lapisan yang mengandung medan magnet yang kuat. Lapisan heliosfer adalah lapisan yang paling jauh dari matahari, dan merupakan batas antara tata surya dan ruang angkasa.   Dengan memahami struktur tata surya, kita dapat memahami lebih baik tentang alam semesta dan tempat kita di dalamnya. Kita juga dapat mengembangkan teknologi dan sains yang lebih canggih untuk menjelajahi dan memahami tata surya lebih baik.</p></div>
+  </div>
+
+  <div class="sub-card">
+    <h3>Ciri-Ciri Planet</h3>
+    <div class="sub-content"><p>Planet-planet di tata surya memiliki ciri-ciri yang unik dan berbeda-beda.   Merkurius adalah planet yang paling dekat dengan matahari, dengan jarak sekitar 58 juta kilometer. Merkurius memiliki suhu yang sangat tinggi, dengan suhu rata-rata sekitar 173 derajat Celsius.   Venus adalah planet yang paling panas di tata surya, dengan suhu rata-rata sekitar 462 derajat Celsius. Venus memiliki atmosfer yang tebal, yang terdiri dari karbon dioksida dan sulfur dioksida.   Bumi adalah planet yang paling berpotensi untuk mendukung kehidupan, dengan suhu rata-rata sekitar 15 derajat Celsius. Bumi memiliki atmosfer yang terdiri dari nitrogen dan oksigen, serta memiliki sistem cuaca yang kompleks.   Mars adalah planet yang paling dekat dengan Bumi, dengan jarak sekitar 225 juta kilometer. Mars memiliki suhu yang sangat dingin, dengan suhu rata-rata sekitar -67 derajat Celsius.   Jupiter adalah planet yang paling besar di tata surya, dengan diameter sekitar 142.984 kilometer. Jupiter memiliki atmosfer yang tebal, yang terdiri dari hidrogen dan helium.   Saturnus adalah planet yang paling indah di tata surya, dengan cincin yang terdiri dari es dan debu. Saturnus memiliki suhu yang sangat dingin, dengan suhu rata-rata sekitar -178 derajat Celsius.   Uranus adalah planet yang paling jauh dari matahari, dengan jarak sekitar 2,88 miliar kilometer. Uranus memiliki suhu yang sangat dingin, dengan suhu rata-rata sekitar -216 derajat Celsius.   Neptunus adalah planet yang paling jauh dari matahari, dengan jarak sekitar 4,46 miliar kilometer. Neptunus memiliki suhu yang sangat dingin, dengan suhu rata-rata sekitar -224 derajat Celsius.   Dengan memahami ciri-ciri planet, kita dapat memahami lebih baik tentang alam semesta dan tempat kita di dalamnya. Kita juga dapat mengembangkan teknologi dan sains yang lebih canggih untuk menjelajahi dan memahami tata surya lebih baik.</p></div>
+  </div>
+
+  </section>
+  <section id="animasi" class="glass-card cyan-border">
+    <div class="section-label cyan-label">Visual</div>
+    <div class="section-title cyan-title">Animasi Interaktif</div>
+    <p style="color:rgba(255,255,255,0.5);font-size:0.83rem;margin-bottom:1rem">Animasi tata surya dapat membantu kita memahami lebih baik tentang struktur dan komponen tata surya. Animasi dapat menampilkan pergerakan planet dan benda langit lainnya, serta dapat menampilkan fenomena astronomi seperti gerhana matahari dan bulan. Animasi juga dapat membantu kita memahami lebih baik tentang ciri-ciri planet dan benda langit lainnya, serta dapat membantu kita mengembangkan teknologi dan sains yang lebih canggih untuk menjelajahi dan memahami tata surya lebih baik.</p>
+    <canvas id="c" height="200"></canvas>
+  </section>
+  <section id="quiz" class="glass-card cyan-border">
+    <div class="section-label cyan-label">Evaluasi</div>
+    <div class="section-title cyan-title">Quiz Interaktif</div>
+    <div class="timer">⏱ <span id="td">10:00</span></div>
+    <div class="quiz-nav" id="qnav"></div>
+    <div id="qbox"></div>
+    <div id="result-box" style="display:none" class="result-box">
+      <div class="result-score" id="rscore"></div>
+      <div class="result-grade" id="rgrade"></div>
+    </div>
+  </section>
+  <section id="glosarium" class="glass-card purple-border">
+    <div class="section-label purple-label">Referensi</div>
+    <div class="section-title purple-title">Glosarium</div>
+    
+  <div class="glos-item">
+    <div class="glos-term">Tata surya</div>
+    <div class="glos-def">Kumpulan benda langit yang terdiri dari matahari, delapan planet, asteroid, komet, dan benda langit lainnya yang mengorbit di sekitar matahari</div>
+  </div>
+
+  </section>
+</div>
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+let sidebarOpen=true;
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const mn=document.getElementById('main');
+  const ov=document.getElementById('overlay');
+  sidebarOpen=!sidebarOpen;
+  if(sidebarOpen){sb.classList.remove('hidden');mn.classList.remove('full');ov.classList.remove('show');}
+  else{sb.classList.add('hidden');mn.classList.add('full');ov.classList.add('show');}
+}
+window.addEventListener('scroll',()=>{
+  const p=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress-bar').style.width=p+'%';
+  document.querySelectorAll('.sidebar a').forEach(a=>{
+    const s=document.querySelector(a.getAttribute('href'));
+    if(s){const r=s.getBoundingClientRect();if(r.top<=120&&r.bottom>=120){a.classList.add('active');}else{a.classList.remove('active');}}
+  });
+});
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+canvas.width=canvas.offsetWidth||800;canvas.height=200;
+const ptypes=[{l:'CO₂',c:'#a855f7'},{l:'H₂O',c:'#06b6d4'},{l:'O₂',c:'#22c55e'},{l:'ATP',c:'#f59e0b'}];
+const pts=[];
+for(let i=0;i<30;i++){const t=ptypes[Math.floor(Math.random()*4)];pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:5+Math.random()*6,vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5,c:t.c,l:t.l});}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<p.r||p.x>canvas.width-p.r)p.vx*=-1;if(p.y<p.r||p.y>canvas.height-p.r)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.c+'33';ctx.fill();ctx.strokeStyle=p.c;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='#fff';ctx.font='8px sans-serif';ctx.textAlign='center';ctx.fillText(p.l,p.x,p.y+3);});requestAnimationFrame(draw);}
+draw();
+const qs=[{"soal":"Apa yang merupakan pusat tata surya?","opsi":["Matahari","Bumi","Mars","Jupiter"],"jawaban":0,"feedback":["Matahari adalah pusat tata surya","Bumi bukanlah pusat tata surya","Mars bukanlah pusat tata surya","Jupiter bukanlah pusat tata surya"]},{"soal":"Apa yang merupakan planet yang paling panas di tata surya?","opsi":["Merkurius","Venus","Bumi","Mars"],"jawaban":1,"feedback":["Merkurius bukanlah planet yang paling panas","Venus adalah planet yang paling panas","Bumi bukanlah planet yang paling panas","Mars bukanlah planet yang paling panas"]},{"soal":"Apa yang merupakan planet yang paling besar di tata surya?","opsi":["Jupiter","Saturnus","Uranus","Neptunus"],"jawaban":0,"feedback":["Jupiter adalah planet yang paling besar","Saturnus bukanlah planet yang paling besar","Uranus bukanlah planet yang paling besar","Neptunus bukanlah planet yang paling besar"]},{"soal":"Apa yang merupakan benda langit yang terdiri dari es dan debu yang mengorbit di sekitar matahari?","opsi":["Asteroid","Komet","Meteoroid","Meteorit"],"jawaban":1,"feedback":["Asteroid bukanlah benda langit yang terdiri dari es dan debu","Komet adalah benda langit yang terdiri dari es dan debu","Meteoroid bukanlah benda langit yang terdiri dari es dan debu","Meteorit bukanlah benda langit yang terdiri dari es dan debu"]},{"soal":"Apa yang merupakan fenomena astronomi yang terjadi ketika bulan melintas di antara bumi dan matahari?","opsi":["Gerhana matahari","Gerhana bulan","Eclipse","Occultasi"],"jawaban":0,"feedback":["Gerhana matahari adalah fenomena yang terjadi ketika bulan melintas di antara bumi dan matahari","Gerhana bulan bukanlah fenomena yang terjadi ketika bulan melintas di antara bumi dan matahari","Eclipse bukanlah fenomena yang terjadi ketika bulan melintas di antara bumi dan matahari","Occultasi bukanlah fenomena yang terjadi ketika bulan melintas di antara bumi dan matahari"]}];
+let cur=0,score=0,done=[];
+const qnav=document.getElementById('qnav');
+const qbox=document.getElementById('qbox');
+function renderNav(){qnav.innerHTML='';qs.forEach((_,i)=>{const d=document.createElement('div');d.className='q-dot'+(done.includes(i)?' done':i===cur?' current':'');d.textContent=i+1;qnav.appendChild(d);});}
+function renderQ(){
+  if(done.length===qs.length){qbox.style.display='none';const rb=document.getElementById('result-box');rb.style.display='block';const pct=score/qs.length;const grade=pct>=0.9?'A':pct>=0.8?'B':pct>=0.6?'C':'D';document.getElementById('rscore').textContent=score+'/'+qs.length;document.getElementById('rgrade').textContent='Nilai: '+grade+' — '+(pct>=0.8?'Luar biasa! 🎉':pct>=0.6?'Bagus, terus belajar! 👍':'Pelajari lagi materinya ya! 📖');return;}
+  while(done.includes(cur))cur=(cur+1)%qs.length;
+  renderNav();
+  const q=qs[cur];
+  qbox.innerHTML='<div class="quiz-q">'+q.soal+'</div>'+q.opsi.map((o,i)=>'<div class="opt" onclick="pick(this,'+i+')">'+String.fromCharCode(65+i)+'. '+o+'</div>').join('')+'<div class="feedback" id="fb"></div>';
+}
+window.pick=function(el,i){const q=qs[cur];qbox.querySelectorAll('.opt').forEach(o=>o.classList.add('disabled'));const fb=document.getElementById('fb');if(i===q.jawaban){el.classList.add('correct');fb.className='feedback ok';score++;}else{el.classList.add('wrong');qbox.querySelectorAll('.opt')[q.jawaban].classList.add('correct');fb.className='feedback no';}fb.textContent=q.feedback[i];fb.style.display='block';done.push(cur);setTimeout(()=>{cur=(cur+1)%qs.length;renderQ();renderNav();},1800);};
+renderNav();renderQ();
+let t=600;const td=document.getElementById('td');const ti=setInterval(()=>{t--;const m=Math.floor(t/60),s=t%60;td.textContent=m+':'+(s<10?'0':'')+s;if(t<=0)clearInterval(ti);},1000);
+</script>
+</body>
+</html>
